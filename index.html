@@ -1,0 +1,64 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220"><title>A21 · 한글화 원격 현황</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1220;color:#f3f7fc;font-family:system-ui,"Malgun Gothic",sans-serif}main{width:min(920px,100%);padding:24px 19px 60px;margin:auto}
+header{display:flex;align-items:center;gap:14px;margin-bottom:31px}.logo{font-weight:900;background:#6fdcc4;color:#0a1c21;padding:12px;border-radius:14px}.eyebrow{text-transform:uppercase;letter-spacing:1.8px;font-size:11px;font-weight:700;color:#76d6c5}.heading{font-size:21px;font-weight:800}.hero{padding:24px;background:linear-gradient(120deg,#172b42,#122035);border-radius:21px;border:1px solid #2d4256;margin-bottom:20px}h1{margin:10px 0;font-size:clamp(23px,5vw,35px)}.desc{font-size:13px;color:#a8b9cb;line-height:1.6}.stamp{margin-top:14px;color:#aac0d4;font-size:12px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}.metric{background:#152233;border:1px solid #2a3c52;border-radius:15px;padding:19px 15px}.metric small{color:#a6b8ca;font-size:12px}.metric strong{display:block;font-size:30px;margin:10px 0 5px;letter-spacing:-.8px}.metric p{margin:0;color:#94a9bd;font-size:11px}.green{color:#76e7ce}.gold{color:#efc97c}h2{font-size:18px;margin:29px 0 14px}.lane{border:1px solid #294051;border-radius:14px;padding:15px 16px;background:#142134;display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:10px}.lane strong{display:block;font-size:14px}.lane small{font-size:11px;color:#91a6ba}.pill{font-size:11px;color:#77dac7;border-radius:50px;padding:5px 9px;border:1px solid #3b736c;white-space:nowrap}.pill.review{color:#f2c279;border-color:#806d4d}.pill.held{color:#acbcfa;border-color:#525c81}.progress{height:9px;background:#2f4153;border-radius:99px;overflow:hidden}.bar{background:#6ed8c5;height:100%;width:0;transition:width .25s}.panel{padding:20px;background:#162538;border:1px solid #2a4059;border-radius:16px}.row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.btn{background:#72dfc9;border:0;color:#0b201e;padding:11px 15px;font-weight:800;border-radius:9px;cursor:pointer}.hint{margin-top:16px;background:#24231f;padding:14px;color:#dcc79d;border:1px solid #55503e;font-size:12px;border-radius:12px;line-height:1.55}.footer{margin-top:30px;color:#819ab4;text-align:center;font-size:12px}.error{color:#ffb3af}
+@media(min-width:700px){.metrics{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="logo">A21</div><div><div class="eyebrow">READ-ONLY MOBILE STATUS</div><div class="heading">던파 한글화 작업 현황</div></div></header>
+<section class="hero"><div class="eyebrow">PROJECT STATUS</div><h1>외부에서 확인하는<br>한글화 진행 상황</h1><div class="desc">PC에서 동기화된 안전한 요약 정보만 표시합니다. 원본 데이터와 AI 요청, 원격 실행 기능은 공개되지 않습니다.</div><div id="time" class="stamp">최종 동기화 시각 확인 중</div></section>
+<section class="metrics">
+<div class="metric"><small>최신 검증 통합</small><strong id="version" class="green">—</strong><p>게임 적용 여부 별도</p></div>
+<div class="metric"><small>기존 번역 초안</small><strong id="provisional">—</strong><p>아직 전부 검증된 것은 아님</p></div>
+<div class="metric"><small>별도 정리된 일반 문구</small><strong id="staged" class="green">—</strong><p>PVF 미적용 초안 메모리</p></div>
+<div class="metric"><small>공식명칭 검증 대기</small><strong id="pending" class="gold">—</strong><p>독립 명칭 근거 필요</p></div>
+</section>
+<h2>7개 작업 레인</h2>
+<div id="lanes">동기화 상태를 확인하고 있습니다.</div>
+<h2>코드 작업 상태</h2>
+<section class="panel"><div class="row"><strong id="jobstage">대기 중</strong><span id="percent">0%</span></div><div class="progress"><div class="bar" id="bar"></div></div><div class="desc" id="jobinfo" style="margin-top:12px">PC에서 진행된 마지막 단계 정보를 표시합니다.</div></section>
+<div class="hint">GitHub Pages는 실시간 원격제어 서비스가 아니에요. PC가 켜져 있고 상태 JSON이 GitHub에 갱신되어야 최신 내용이 표시됩니다. 새 동기화가 없으면 마지막 상태 그대로입니다.</div>
+<p style="text-align:center;margin-top:23px"><button class="btn" id="refresh">최신 게시 상태 새로고침</button></p>
+<div class="footer">공개 요약 화면 · 원본 PVF/JSON/경로/인증정보 미포함 · 30초마다 상태 확인</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const n=x=>typeof x==='number'?x.toLocaleString('ko-KR'):'—';
+const labels={waiting:'입력 대기',review:'검증 대기',held:'기술 보류',manual:'수동 AI 필요'};
+async function load(){
+ try{
+  const r=await fetch('./status.json?t='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  const d=await r.json();if(d.kind!=='A21_PUBLIC_AGGREGATES_ONLY'||d.schema!==1)throw Error('알 수 없는 상태 데이터');
+  $('version').textContent=d.summary.integratedVersion?'v'+d.summary.integratedVersion:'—';
+  $('provisional').textContent=n(d.summary.provisional);
+  $('staged').textContent=n(d.summary.staged);
+  $('pending').textContent=n(d.summary.canonicalPending);
+  const age=Date.now()-Date.parse(d.updatedAt);
+  const stale=age>15*60*1000;
+  $('time').textContent='마지막 PC 동기화 · '+new Date(d.updatedAt).toLocaleString('ko-KR',{hour12:false})+(stale?'  · 오래된 정보':'');
+  $('time').className=stale?'stamp error':'stamp';
+  const dest=$('lanes');dest.replaceChildren();
+  for(const lane of d.lanes){
+   const el=document.createElement('div');el.className='lane';
+   const left=document.createElement('div');
+   const strong=document.createElement('strong');strong.textContent=lane.name;
+   const small=document.createElement('small');small.textContent='기록된 수치 '+n(lane.count);
+   left.append(strong,small);
+   const badge=document.createElement('span');badge.className='pill '+lane.state;badge.textContent=labels[lane.state]||'대기 중';
+   el.append(left,badge);dest.append(el);
+  }
+  $('jobstage').textContent=d.job.active?'코드 처리 중':'마지막 상태';
+  $('percent').textContent=d.job.percent+'%';$('bar').style.width=d.job.percent+'%';
+  $('jobinfo').textContent='마지막 단계: '+d.job.stage+' · 결과: '+d.job.outcome+' · 과거 인계 '+n(d.summary.unresolvedHandoffs)+'건 추적 필요';
+ }catch(e){$('time').textContent='상태 정보를 읽지 못했습니다: '+e.message;$('time').className='stamp error'}
+}
+$('refresh').onclick=load;load();setInterval(load,30000);
+</script>
+</body></html>

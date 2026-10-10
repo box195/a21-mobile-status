@@ -1,0 +1,11 @@
+﻿# This repo is PUBLIC. Do not add local sources, private strings, PVF/game/server, .env, logs, keys, or tokens.
+*.log
+.env
+.env.*
+*.pvf
+*.bin
+*.zip
+*.sqlite
+*.db
+node_modules/
+.DS_Store

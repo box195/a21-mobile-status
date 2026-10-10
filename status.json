@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "kind": "A21_PUBLIC_AGGREGATES_ONLY",
+  "updatedAt": "2026-10-10T08:22:46.139Z",
+  "source": "PC_LOCAL_SNAPSHOT",
+  "summary": {
+    "integratedVersion": 142,
+    "provisional": 23860,
+    "staged": 14258,
+    "canonicalPending": 5470,
+    "unresolvedHandoffs": 251,
+    "catalogPercent": 11.4
+  },
+  "job": {
+    "active": false,
+    "stage": "IDLE",
+    "percent": 0,
+    "outcome": "IDLE"
+  },
+  "lanes": [
+    {
+      "name": "통합·검증",
+      "state": "review",
+      "count": 2712
+    },
+    {
+      "name": "아이템 번역",
+      "state": "waiting",
+      "count": 9458
+    },
+    {
+      "name": "UI·툴팁",
+      "state": "waiting",
+      "count": 7757
+    },
+    {
+      "name": "스킬·문구",
+      "state": "waiting",
+      "count": 6645
+    },
+    {
+      "name": "아이템명 검증",
+      "state": "review",
+      "count": 5470
+    },
+    {
+      "name": "명칭 검증",
+      "state": "waiting",
+      "count": 0
+    },
+    {
+      "name": "UI 기술 검증",
+      "state": "held",
+      "count": 1234
+    }
+  ]
+}
