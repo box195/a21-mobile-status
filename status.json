@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "kind": "A21_PUBLIC_AGGREGATES_ONLY",
-  "updatedAt": "2026-10-10T08:54:08.940Z",
+  "updatedAt": "2026-10-10T08:58:17.693Z",
   "source": "PC_LOCAL_SNAPSHOT",
   "summary": {
     "integratedVersion": 142,
@@ -13,9 +13,9 @@
   },
   "job": {
     "active": false,
-    "stage": "IDLE",
-    "percent": 0,
-    "outcome": "IDLE"
+    "stage": "FINISHED",
+    "percent": 100,
+    "outcome": "WAITING_FOR_INPUT_OR_VERIFICATION"
   },
   "connection": {
     "fixed": "pass",
