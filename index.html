@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,6 +23,7 @@ header{display:flex;align-items:center;gap:14px;margin-bottom:31px}.logo{font-we
 <div id="lanes">동기화 상태를 확인하고 있습니다.</div>
 <h2>코드 작업 상태</h2>
 <section class="panel"><div class="row"><strong id="jobstage">대기 중</strong><span id="percent">0%</span></div><div class="progress"><div class="bar" id="bar"></div></div><div class="desc" id="jobinfo" style="margin-top:12px">PC에서 진행된 마지막 단계 정보를 표시합니다.</div></section>
+<h2>WebGPT 연결 현황</h2><section class="panel"><div class="row"><strong>고정 Worker · Gateway · Funnel · HTTPS</strong><span id="fixed-tunnel" class="pill">확인 중</span></div><div class="row"><strong>Recovery 예비 연결</strong><span id="recovery-tunnel" class="pill">확인 중</span></div><div class="row"><strong>OpenSession 잔여 유휴시간</strong><span id="session-hours">—</span></div><div class="desc" id="tunnel-updated">마지막 PC 진단 상태를 확인 중입니다.</div><p class="desc">외부에서는 읽기 전용이며, 터널 주소·복구 실행·인증정보는 제공하지 않습니다. 연결 장애 복구는 PC 앱에서만 가능합니다.</p></section>
 <div class="hint">GitHub Pages는 실시간 원격제어 서비스가 아니에요. PC가 켜져 있고 상태 JSON이 GitHub에 갱신되어야 최신 내용이 표시됩니다. 새 동기화가 없으면 마지막 상태 그대로입니다.</div>
 <p style="text-align:center;margin-top:23px"><button class="btn" id="refresh">최신 게시 상태 새로고침</button></p>
 <div class="footer">공개 요약 화면 · 원본 PVF/JSON/경로/인증정보 미포함 · 30초마다 상태 확인</div>
@@ -57,6 +58,14 @@ async function load(){
   $('jobstage').textContent=d.job.active?'코드 처리 중':'마지막 상태';
   $('percent').textContent=d.job.percent+'%';$('bar').style.width=d.job.percent+'%';
   $('jobinfo').textContent='마지막 단계: '+d.job.stage+' · 결과: '+d.job.outcome+' · 과거 인계 '+n(d.summary.unresolvedHandoffs)+'건 추적 필요';
+  const tunnelInfo=d.connection||{};
+  const tunnelState={pass:'정상',fail:'점검 필요',unknown:'확인 불가'};
+  const fixed=$('fixed-tunnel');fixed.textContent=tunnelState[tunnelInfo.fixed]||'확인 불가';fixed.className='pill '+(tunnelInfo.fixed==='fail'?'review':'');
+  const backup=$('recovery-tunnel');backup.textContent=tunnelState[tunnelInfo.recovery]||'확인 불가';backup.className='pill '+(tunnelInfo.recovery==='fail'?'review':'');
+  $('session-hours').textContent=tunnelInfo.session==='active'&&typeof tunnelInfo.remainingHours==='number'?'약 '+tunnelInfo.remainingHours+'시간':tunnelInfo.session==='expired'?'만료':'확인 불가';
+  const checkAt=tunnelInfo.checkedAt?new Date(tunnelInfo.checkedAt):null;
+  $('tunnel-updated').textContent='PC 종합 진단: '+(checkAt&&!Number.isNaN(checkAt.getTime())?checkAt.toLocaleString('ko-KR',{hour12:false}):'확인 불가')+' · 게시 당시 상태';
+
  }catch(e){$('time').textContent='상태 정보를 읽지 못했습니다: '+e.message;$('time').className='stamp error'}
 }
 $('refresh').onclick=load;load();setInterval(load,30000);

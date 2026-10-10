@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "kind": "A21_PUBLIC_AGGREGATES_ONLY",
-  "updatedAt": "2026-10-10T08:22:46.139Z",
+  "updatedAt": "2026-10-10T08:51:44.872Z",
   "source": "PC_LOCAL_SNAPSHOT",
   "summary": {
     "integratedVersion": 142,
@@ -16,6 +16,13 @@
     "stage": "IDLE",
     "percent": 0,
     "outcome": "IDLE"
+  },
+  "connection": {
+    "fixed": "pass",
+    "recovery": "fail",
+    "session": "active",
+    "remainingHours": 24,
+    "checkedAt": "2026-10-10T08:45:05.5616206+00:00"
   },
   "lanes": [
     {
